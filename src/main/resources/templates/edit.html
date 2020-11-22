@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        div{
+            margin-top: 15px;
+        }
+        h1{
+            text-align: center;
+        }
+        .form{
+            padding-left:30%;
+            padding-right: 30%;
+            text-align: center;
+        }
+        input{
+
+
+        }
+        p{
+            margin-left: 20%;
+        }
+        .button{
+            text-align: justify-all;
+            margin-top: 50px;
+        }
+        .dopost{
+            margin-right: 0;
+        }
+        .doreturn{
+            margin-left: 50px;
+        }
+    </style>
+</head>
+<body>
+<h1>这是edit页面</h1>
+<form action="/receiveEdit" method="post">
+    <div class="form">
+        <div> 姓名：<input type="text" th:value="${session.name}"  name="name"></div>
+        <div>电话：<input type="text" th:value="${session.phoneNum}" name="phoneNum"></div>
+        <div>邮箱：<input type="text" th:value="${session.email}" name="email"></div>
+        <div>住址：<input type="text" th:value="${session.address}" name="address"></div>
+        <div>qq号：<input type="text" th:value="${session.qqNum}" name="qqNum"></div>
+
+        <div class="button">
+            <input type="submit" value="提交" class="dopost">
+            <a href="/directory" class="doreturn"><button class="btn" type="button">返回电话簿</button></a>
+        </div>
+    </div>
+</form>
+</body>
+</html>
