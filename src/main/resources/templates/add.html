@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <title>Title</title>
     <style>
         div{
@@ -50,6 +51,99 @@
         </div>
     </div>
 </form>
+<script>
+    $(document).ready(
+        $("#btnAdd").click(
+            function () {
+                save_method = 'add';
+                $('#form')[0].reset(); // 重置form
+                $('#modal_form').modal('show'); // 显示modal
+                $('.modal-title').text('Add Todo'); // 设置title
+            }
+        ),
+        $("#btnSave").click(
+            function () {
+                let url;
+                if (save_method == 'add') {
+                    url = "/ajax/todo/add/";
+                }
+                else {
+                    url = "/ajax/todo/edit/";
+                }
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: $('#form').serialize(),
+                    success: function(result) {
+                        //如果成功，隐藏弹出框并重新加载数据
+                        $('#modal_form').modal('hide');
+                        reload_table();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('新建或修改错误！');
+                    }
+                })
+            }
+        ),
+        $("#todoTable").on('click', ".btnEdit", function () {
+                save_method = 'update';
+                $('#form')[0].reset();
+                $('[name="todoId"]').val($(this).parent("td").siblings("td.index").text());
+                $('[name="content"]').val($(this).parent("td").prev().text());
+                $('#modal_form').modal('show');
+                $('.modal-title').text('Edit Todo');
+            }
+        ),
 
+        $("#todoTable").on('click', ".btnDel", function () {
+                $.ajax({
+                    url: "/ajax/todo/delete/",
+                    type: "delete",
+                    data: {"todoId": $(this).parent("td").siblings("td.index").text()},
+                    success: function (data) {
+                        //如果成功，隐藏弹出框并重新加载数据
+                        $('#modal_form').modal('hide');
+                        reload_table();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('删除错误！');
+                    }
+                })
+            }
+        ),
+
+        reload_table()
+    )
+
+
+    function reload_table() {
+        $.ajax({
+            url: "/ajax/todo/list/",
+            type: "get",
+            dataType: "JSON",
+            success: function (data) {
+                $("#todoTable").children("tbody").empty()
+                var htmlStr = ""
+                for (var i = 0; i < data.length; i++) {
+                    htmlStr = htmlStr + "<tr>" +
+                        "<td  class='index'>" + (i + 1) + "</td>" +
+                        "<td>" + data[i].content + "</td>" +
+                        "<td>" +
+                        "<button class='btn btn-xs btn-success btnEdit'>编辑</button>" +
+                        "<button class='btn btn-xs btn-danger btnDel'>删除</button>" +
+                        "</td>" +
+                        "</tr>";
+                }
+                $("#todoTable").children("tbody").html(htmlStr);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('获取数据错误');
+            }
+        })
+
+
+    }
+
+</script>
 </body>
 </html>
